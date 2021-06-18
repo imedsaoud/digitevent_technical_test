@@ -8,11 +8,9 @@ const compress = require('compression');
 const methodOverride = require('method-override');
 const cors = require('cors');
 const helmet = require('helmet');
-const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./swagger.json');
 const routes = require('../routes/index.route');
 const config = require('./config');
-const passport = require('./passport')
+
 
 const app = express();
 
@@ -20,7 +18,7 @@ if (config.env === 'development') {
   app.use(logger('dev'));
 }
 
-// Choose what fronten framework to serve the dist from
+// Choose what frontend framework to serve the dist from
 var distDir = '../../dist/';
 if (config.frontend == 'react'){
   distDir ='../../node_modules/material-dashboard-react/dist'
@@ -28,13 +26,11 @@ if (config.frontend == 'react'){
   distDir ='../../dist/' ;
  }
 
-// 
 app.use(express.static(path.join(__dirname, distDir)))
 app.use(/^((?!(api)).)*/, (req, res) => {
   res.sendFile(path.join(__dirname, distDir + '/index.html'));
 });
 
-console.log(distDir);
  //React server
 app.use(express.static(path.join(__dirname, '../../node_modules/material-dashboard-react/dist')))
 app.use(/^((?!(api)).)*/, (req, res) => {
@@ -55,9 +51,6 @@ app.use(helmet());
 // enable CORS - Cross Origin Resource Sharing
 app.use(cors());
 
-app.use(passport.initialize());
-
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // API router
 app.use('/api/', routes);
